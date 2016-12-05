@@ -1,34 +1,25 @@
 package com.knoldus.scheduler
 
 
-import akka.actor.ActorRef
-import com.knoldus.actors.LocalActorRefFactory
-import com.knoldus.configuration.Configuration._
-import com.knoldus.messages.Message
+import akka.actor.{ActorRef, ActorSystem, Props}
+import com.knoldus.actors.FirstActor
+import com.knoldus.configuration.Namer
+import org.slf4j.Logger
 
 import scala.concurrent.duration._
 
 trait Scheduler {
 
-  val localActorRefFactory: LocalActorRefFactory
+  val system: ActorSystem
+  val logger: Logger
 
-  def schedule: Unit = {
-
+  def register(message: Any, delay: FiniteDuration): Unit = {
     import scala.concurrent.ExecutionContext.Implicits.global
 
-    val _system = localActorRefFactory.system
-    val firstReceiver: ActorRef = localActorRefFactory getReceiver NAME_FIRST_ACTOR
-    val secondReceiver = localActorRefFactory getReceiver NAME_SECOND_ACTOR
+    val actor: ActorRef = system.actorOf(Props(classOf[FirstActor]), Namer.generate)
+    logger.info(s"HEY i am new actor this is my name ${actor.path}")
+    this.system.scheduler.scheduleOnce(delay, actor, message)
 
-    localActorRefFactory.system.scheduler.scheduleOnce(5000 milliseconds, firstReceiver, Message)
-    localActorRefFactory.system.scheduler.scheduleOnce(500 milliseconds, secondReceiver, Message)
   }
-
-}
-
-object Scheduler extends Scheduler{
-
-
-  val localActorRefFactory: LocalActorRefFactory = LocalActorRefFactory
 
 }

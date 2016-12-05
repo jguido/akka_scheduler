@@ -3,7 +3,7 @@ package actors
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import com.knoldus.actors.FirstActor
-import com.knoldus.messages.{Message, Reply}
+import com.knoldus.messages.Message
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 class FirstActorSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSender
@@ -24,7 +24,6 @@ with WordSpecLike with Matchers with BeforeAndAfterAll {
       probe watch halfYearlyActor
 
       probe.send(halfYearlyActor, Message)
-      probe.expectMsg(Reply)
 
     }
 
@@ -35,7 +34,6 @@ with WordSpecLike with Matchers with BeforeAndAfterAll {
       probe watch halfYearlyActor
 
       probe.send(halfYearlyActor, Message)
-      probe.expectMsg(Reply)
     }
   }
 }
